@@ -1,5 +1,7 @@
 # Directory
 /.vs
+/Release
+/x64
 
 # Prerequisites
 *.d

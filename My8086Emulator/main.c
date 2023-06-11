@@ -44,13 +44,13 @@ void emulator_init(Emulator* e)
 
 }
 
-void r_proc(Emulator* e,char* cmd)
+void r_proc(Emulator* e, char* cmd)
 {
 	assert(e);
 	assert(cmd);
 	size_t size = strlen(cmd);
 	if (2 == size) { /* show infomation of all registers. */
-		printf("AX=%04X  BX=%04X  CX=%04X  DX=%04X  SP=%04X  BP=%04X  SI==%04X\n", 
+		printf("AX=%04X  BX=%04X  CX=%04X  DX=%04X  SP=%04X  BP=%04X  SI==%04X\n",
 			e->rax, e->rbx, e->rcx, e->rdx, e->rsp, e->rbp, e->rsi);
 		printf("DI=%04X  DS=%04X  ES=%04X  SS=%04X  CS=%04X  IP=%04X\n",
 			e->rdi, e->rds, e->res, e->rss, e->rcs, e->rip);
@@ -58,7 +58,7 @@ void r_proc(Emulator* e,char* cmd)
 	else {
 		static char* regs[] = { "AX","BX","CX","DX","SP","BP","SI","DI","DS","ES","SS","CS","IP" };
 		char targetReg[3] = { cmd[2],cmd[3],'\0' };
-		for(int i = 0;i<13;i++)
+		for (int i = 0; i < 13; i++)
 			if (strcmp(targetReg, regs[i]) == 0) {
 				Register* reg = (Register*)e + i;
 				printf("%s=%04X\n", targetReg, *reg);
