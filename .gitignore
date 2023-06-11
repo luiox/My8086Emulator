@@ -33,3 +33,5 @@
 *.exe
 *.out
 *.app
+/My8086Emulator/x64/Debug
+/x64/Debug
