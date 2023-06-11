@@ -1,43 +1,74 @@
-﻿#define DEBUG 1
+﻿#define _CRT_SECURE_NO_WARNINGS
+#define DEBUG 1
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
 
+/* This macro function extracts the low 8 bits from a 16-bit value. */
 #define GetLow8BitsIn16Bits(x) ((x) & 0x00FF)
+/* This macro function extracts the high 8 bits from a 16-bit value. */
 #define GetHigh8BitsIn16Bits(x) ((x) >> 8)
+/* This macro function combines two 8-bit values into a single 16-bit value. */
 #define CombineTwo8BitsTo16Bits(high,low) (((high) << 8) | (low))
 
 typedef unsigned int Register; /* Every register in 8086 is 16 bits. */
 
 typedef struct tagEmulator {
 	/* General-Purpose Registers. */
-	Register rax;
-	Register rbx;
-	Register rcx;
-	Register rdx;
+	Register rax; /* Accumulator register */
+	Register rbx; /* Base register */
+	Register rcx; /* Counter register */
+	Register rdx; /* Data register */
+	Register rsp; /* Stack pointer register */
+	Register rbp; /* Base pointer register */
+	Register rsi; /* Source index register */
+	Register rdi; /* Destination index register */
 	/* Segment Registers. */
-	Register rcs;
-	Register rip;
-	Register rss;
-	Register res;
-	/* Address Register. */
-	Register rds;
-	/* Stack Registers. */
-	Register rsp;
-	Register rsi;
-	Register rdi;
-	char* memory;
-}Emulator;
+	Register rds; /* Data segment register */
+	Register res; /* Extra segment register */
+	Register rss; /* Stack segment register */
+	Register rcs; /* Code segment register */
+	Register rip; /* Instruction pointer register */
 
+	char* memory; /* Memory */
+} Emulator;
 char memory[1 << 16]; // 64K memory
 
 void emulator_init(Emulator* e)
 {
+	assert(e);
+	memset(e, 0, sizeof(Emulator));
 	e->memory = memory;
-	e->rax = 0;
-	e->rbx = 0;
-	e->rcx = 0;
-	e->rdx = 0;
 
+}
+
+void r_proc(Emulator* e,char* cmd)
+{
+	assert(e);
+	assert(cmd);
+	size_t size = strlen(cmd);
+	if (2 == size) { /* show infomation of all registers. */
+		printf("AX=%04X  BX=%04X  CX=%04X  DX=%04X  SP=%04X  BP=%04X  SI==%04X\n", 
+			e->rax, e->rbx, e->rcx, e->rdx, e->rsp, e->rbp, e->rsi);
+		printf("DI=%04X  DS=%04X  ES=%04X  SS=%04X  CS=%04X  IP=%04X\n",
+			e->rdi, e->rds, e->res, e->rss, e->rcs, e->rip);
+	}
+	else {
+		static char* regs[] = { "AX","BX","CX","DX","SP","BP","SI","DI","DS","ES","SS","CS","IP" };
+		char targetReg[3] = { cmd[2],cmd[3],'\0' };
+		for(int i = 0;i<13;i++)
+			if (strcmp(targetReg, regs[i]) == 0) {
+				Register* reg = (Register*)e + i;
+				printf("%s=%04X\n", targetReg, *reg);
+				printf(":");
+				unsigned short value;
+				scanf("%hu", &value);
+				*reg = value;
+				break;
+			}
+	}
 }
 
 #ifdef DEBUG
@@ -58,13 +89,23 @@ int main(int argc, char* argv)
 	emulator_init(&e);
 
 #ifdef DEBUG
-	macro_test();
+	//macro_test();
 #endif
 
 	/* Determine whether to execute files or simple code based on the number of args. */
 	if (argc == 1) { /* execute simple code. */
 		while (1) {
-
+			printf("-");
+			char cmd[128] = { '\0' };
+			fgets(cmd, 127, stdin);
+			fflush(stdin);
+			switch (cmd[0]) {
+			case 'R':
+				r_proc(&e, cmd);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 	else { /* execute asm file. */
