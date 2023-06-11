@@ -50,7 +50,7 @@ void r_proc(Emulator* e, char* cmd)
 	assert(cmd);
 	size_t size = strlen(cmd);
 	if (2 == size) { /* show infomation of all registers. */
-		printf("AX=%04X  BX=%04X  CX=%04X  DX=%04X  SP=%04X  BP=%04X  SI==%04X\n",
+		printf("AX=%04X  BX=%04X  CX=%04X  DX=%04X  SP=%04X  BP=%04X  SI=%04X\n",
 			e->rax, e->rbx, e->rcx, e->rdx, e->rsp, e->rbp, e->rsi);
 		printf("DI=%04X  DS=%04X  ES=%04X  SS=%04X  CS=%04X  IP=%04X\n",
 			e->rdi, e->rds, e->res, e->rss, e->rcs, e->rip);
