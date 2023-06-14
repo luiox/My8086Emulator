@@ -6,6 +6,8 @@
 #include <string.h>
 #include <assert.h>
 
+#pragma warning(disable:6031)
+
 /* This macro function extracts the low 8 bits from a 16-bit value. */
 #define GetLow8BitsIn16Bits(x) ((x) & 0x00FF)
 /* This macro function extracts the high 8 bits from a 16-bit value. */
@@ -71,6 +73,11 @@ void r_proc(Emulator* e, char* cmd)
 	}
 }
 
+void d_proc(Emulator* e, char* cmd)
+{
+	
+}
+
 #ifdef DEBUG
 
 void macro_test()
@@ -103,6 +110,11 @@ int main(int argc, char* argv)
 			case 'R':
 				r_proc(&e, cmd);
 				break;
+			case 'D':
+				d_proc(&e, cmd);
+				break;
+			case 'E':
+
 			default:
 				break;
 			}
